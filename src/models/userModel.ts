@@ -91,7 +91,10 @@ const loginUser = async (data: UserLoginBody) => {
       );
       if (!isPasswordCorrect) throw new Error("Credenciales inválidas");
 
-      return user;
+      return {
+         email: user.email,
+         _id: user._id,
+      };
    } catch (error) {
       throw new Error("Error al autenticar usuario");
    }

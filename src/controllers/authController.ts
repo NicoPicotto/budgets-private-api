@@ -23,7 +23,7 @@ export const login = async (req: Request, res: Response) => {
       const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
          expiresIn: "2h",
       });
-      return res.status(200).json({ token });
+      return res.status(200).json({ token, email: user.email });
    } catch (error: any) {
       return res.status(400).json({ error: error.message });
    }
