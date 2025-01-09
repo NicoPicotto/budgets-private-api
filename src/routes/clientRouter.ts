@@ -6,11 +6,11 @@ import {
    getClientById,
    updateClient,
 } from "../controllers/clientController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { AuthMiddleware } from "../middleware/authMiddleware";
 
 const clientRouter = Router();
 
-clientRouter.use(authMiddleware);
+clientRouter.use(AuthMiddleware.authenticate);
 
 clientRouter.get("/", getAllClients);
 clientRouter.get("/:id", getClientById);

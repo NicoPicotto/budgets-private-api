@@ -1,28 +1,27 @@
 import { Request, Response, NextFunction } from "express";
-import jtw from "jsonwebtoken";
+import passport from "../config/passport";
+import { IRequest } from "../interfaces/requestInterface";
 
-process.loadEnvFile();
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-   const JWT_SECRET = process.env.JWT_SECRET;
-   const token = req.headers.authorization?.replace("Bearer ", "");
+export const AuthMiddleware = {
+   async authenticate(req: IRequest, res: Response, next: NextFunction): Promise<void> {
 
-   if (!token) {
-      res.status(401).json({
-         error: "Se requiere estar autenticado para utilizar este servicio",
-      });
-      return;
+      passport.authenticate("jwt", (err: Error, currentUser: any, info: any) => {
+         if (err) {
+            return next(err);
+         }
+
+         console.log("currentUser", req.currentUser);
+
+         if (!currentUser) {
+            return res.status(401).json({ message: "Unauthorized Access - No Token Provided!" });
+         }
+
+         req.currentUser = currentUser.user;
+         req.accessToken = req.headers.authorization;
+
+         next();
+      })(req, res, next);
    }
 
-   try {
-      const decodedToken = jtw.verify(token, JWT_SECRET || "");
-      (req as any).user = decodedToken;
-      next();
-   } catch (error) {
-      res.status(401).json({
-         error: "No se ha proporcionado el token de autenticación",
-      });
-   }
 };
-
-export { authMiddleware };
