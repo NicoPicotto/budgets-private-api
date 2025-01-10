@@ -6,10 +6,12 @@ import {
    IGetUserRequest,
    IGetUserByIdRequest,
    IDeleteUserRequest,
+   IUpdateUserRequest,
    ICreateUserResponse,
    IGetUsersResponse,
    IGetUserByIdResponse,
    IDeleteUserResponse,
+   IUpdateUserResponse
 } from '../interfaces/userInterface';
 import { getErrorMessage } from '../utils/errorHandler';
 
@@ -21,7 +23,18 @@ export const UserController = {
    ): Promise<Response<ICreateUserResponse>> {
       try {
          const newUser = await UserService.createUser(req.body);
-         return handleResponse(res, 201, 'User created successfully', newUser);
+         return handleResponse(res, 201, 'User created successfully', newUser.toObject());
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error), undefined, error);
+      }
+   },
+   async updateUser(
+      req: IUpdateUserRequest,
+      res: Response
+   ): Promise<Response<IUpdateUserResponse>> {
+      try {
+         const updatedUser = await UserService.updateUser(req.params.id, req.body);
+         return handleResponse(res, 200, 'User updated successfully', updatedUser.toObject());
       } catch (error) {
          return handleResponse(res, 400, getErrorMessage(error), undefined, error);
       }

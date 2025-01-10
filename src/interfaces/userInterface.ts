@@ -23,9 +23,18 @@ export interface IUser extends Document {
 //Request
 export interface ICreateUserRequest extends IRequest {
    body: {
-      name: string;
+      firstName: string;
+      lastName: string;
       email: string;
-      password: string;
+   };
+}
+
+export interface IUpdateUserRequest extends IRequest {
+   body: {
+      _id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
    };
 }
 
@@ -69,6 +78,11 @@ export interface ICreateUserResponse extends Response {
    user: IUser;
 }
 
+export interface IUpdateUserResponse extends Response {
+   success: boolean;
+   message: string;
+   user: IUser;
+}
 export interface IGetUsersResponse extends Response {
    success: boolean;
    message: string;
@@ -115,7 +129,18 @@ export interface IForgotPasswordRequest extends IRequest {
       email: string;
    };
 }
+export interface ISendInvitationRequest extends IRequest {
+   body: {
+      email: string;
+   };
+}
 
+export interface IAcceptInvitationRequest extends IRequest {
+   body: {
+      token: string;
+      newPassword: string;
+   };
+}
 
 
 

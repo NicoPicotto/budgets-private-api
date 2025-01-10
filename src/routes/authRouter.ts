@@ -14,5 +14,10 @@ authRouter.post("/resetPassword", AuthController.resetPassword);
 authRouter.get("/validateResetToken/:accessToken", AuthController.validateResetToken);
 authRouter.post("/refreshToken", AuthController.refreshToken);
 authRouter.post("/logout", AuthController.logout);
+authRouter.post("/sendInvitation", AuthController.sendInvitation);
+authRouter.get("/validateInvitation/:accessToken", AuthController.validateInvitation);
+authRouter.post("/acceptInvitation", AuthController.acceptInvitation);
+authRouter.post("/revokeToken", AuthMiddleware.authenticate, AuthController.revokeToken);
+
 
 export default authRouter;

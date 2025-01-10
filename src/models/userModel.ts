@@ -11,7 +11,7 @@ const UserSchema = new Schema(
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
       email: { type: String, required: true, unique: true },
-      password: { type: String, required: true },
+      password: { type: String, required: false, default: '' },
       resetPasswordToken: {
          type: String,
          trim: true,
@@ -58,7 +58,7 @@ const saltRounds = 10;
 //se ejecuta antes de hacer el evento save
 UserSchema.pre("save", function (next) {
 
-   if (this.isModified("password")) {
+   if (this.isModified("password") && this.password) {
       this.password = bcrypt.hashSync(this.password, saltRounds);
    }
    next();

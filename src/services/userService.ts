@@ -14,11 +14,14 @@ export class UserService {
         return newUser;
     }
 
-    static async updateUser(id: string, updateData: Partial<IUser>): Promise<IUser | null> {
+    static async updateUser(id: string, updateData: Partial<IUser>): Promise<IUser> {
         const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, {
             new: true, // Devuelve el documento actualizado
             runValidators: true, // Ejecuta las validaciones del esquema
         });
+        if (!updatedUser) {
+            throw new Error('Error updating user');
+        }
         return updatedUser;
     }
 

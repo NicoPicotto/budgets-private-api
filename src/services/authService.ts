@@ -202,6 +202,15 @@ export class AuthService {
 
         return user.toObject();
     }
+    static async revokeToken(refreshToken: string): Promise<void> {
+        const user = await UserModel.findOneAndUpdate(
+            { refreshToken },
+            { refreshToken: null, $inc: { tokenVersion: 1 } }
+        );
+        if (!user) {
+            throw new Error("Invalid refresh token");
+        }
+    }
 
 
 
