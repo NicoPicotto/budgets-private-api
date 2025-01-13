@@ -1,9 +1,7 @@
 import { Schema, model, } from 'mongoose';
 import bcrypt from "bcrypt";
 import { IUser } from "../interfaces/userInterface";
-
-import crypto from 'crypto';
-import { userInfo } from 'os';
+const { USER_STATES, ROLES } = require('../config/constants');
 
 
 const UserSchema = new Schema(
@@ -11,6 +9,8 @@ const UserSchema = new Schema(
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
       email: { type: String, required: true, unique: true },
+      state: { type: String, enum: [USER_STATES.INITIAL, USER_STATES.ACTIVE, USER_STATES.REMOVED, USER_STATES.INACTIVE, USER_STATES.SUSPENDED], default: USER_STATES.INITIAL },
+      role: { type: String, enum: [ROLES.ADMIN, ROLES.MEMBER, ROLES.CLIENT, ROLES.GUEST, ROLES.MODERATOR], default: ROLES.MEMBER },
       password: { type: String, required: false, default: '' },
       resetPasswordToken: {
          type: String,

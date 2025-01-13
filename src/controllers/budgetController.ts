@@ -1,109 +1,134 @@
 import { Request, Response } from "express";
-import Budget from "../models/budgetModel";
-import BudgetBody from "../interfaces/budgetInterface";
+import { BudgetService } from "../services/budgetService";
+import { handleResponse } from "../utils/responseHandler";
+import { getErrorMessage } from "../utils/errorHandler";
 
-const getAllBudgets = async (req: Request, res: Response) => {
-   try {
-      const budgets = await Budget.getAllBudgets();
-      res.status(200).json(budgets);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al obtener los presupuestos",
-         error: error.message,
-      });
-   }
+export const BudgetController = {
+   async createBudget(req: Request, res: Response) {
+      try {
+         const budget = await BudgetService.createBudget(req.body);
+         return handleResponse(res, 201, "Budget created", budget);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getBudgets(req: Request, res: Response) {
+      try {
+         const budgets = await BudgetService.getBudgets();
+         return handleResponse(res, 200, "Budgets found", budgets);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getBudgetById(req: Request, res: Response) {
+      try {
+         const budget = await BudgetService.getBudgetById(req.params.id);
+         if (!budget) {
+            return handleResponse(res, 404, "Budget not found");
+         }
+         return handleResponse(res, 200, "Budget found", budget);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async updateBudget(req: Request, res: Response) {
+      try {
+         const budget = await BudgetService.updateBudget(req.params.id, req.body);
+         if (!budget) {
+            return handleResponse(res, 404, "Budget not found");
+         }
+         return handleResponse(res, 200, "Budget updated", budget);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async deleteBudget(req: Request, res: Response) {
+      try {
+         const budget = await BudgetService.deleteBudget(req.params.id);
+         if (!budget) {
+            return handleResponse(res, 404, "Budget not found");
+         }
+         return handleResponse(res, 200, "Budget deleted", budget);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async addBudgetConcepts(req: Request, res: Response) {
+      try {
+
+         console.log(req.body, "budgetConcept");
+         const budget = await BudgetService.addBudgetConcepts(req.params.id, req.body.budgetConcepts);
+         if (!budget) {
+            return handleResponse(res, 404, "Budget not found");
+         }
+         return handleResponse(res, 200, "Budget concepts added", budget);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getBudgetConcepts(req: Request, res: Response) {
+      try {
+         const budgetConcepts = await BudgetService.getBudgetConcepts(req.params.id);
+         if (!budgetConcepts) {
+            return handleResponse(res, 404, "Budget concepts not found");
+         }
+         return handleResponse(res, 200, "Budget concepts found", budgetConcepts);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getBudgetConceptById(req: Request, res: Response) {
+      try {
+         const budgetConcept = await BudgetService.getBudgetConceptById(req.params.conceptId);
+         if (!budgetConcept) {
+            return handleResponse(res, 404, "Budget concept not found");
+         }
+         return handleResponse(res, 200, "Budget concept found", budgetConcept);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async updateBudgetConcept(req: Request, res: Response) {
+      try {
+         const budgetConcept = await BudgetService.updateBudgetConcept(req.params.conceptId, req.body);
+         if (!budgetConcept) {
+            return handleResponse(res, 404, "Budget concept not found");
+         }
+         return handleResponse(res, 200, "Budget concept updated", budgetConcept);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async deleteBudgetConcept(req: Request, res: Response) {
+      try {
+         const budgetConcept = await BudgetService.deleteBudgetConcept(req.params.id, req.params.conceptId);
+         if (!budgetConcept) {
+            return handleResponse(res, 404, "Budget concept not found");
+         }
+         return handleResponse(res, 200, "Budget concept deleted", budgetConcept);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getBudgetConceptsByBudgetId(req: Request, res: Response) {
+      try {
+         const budgetConcepts = await BudgetService.getBudgetConceptsByBudgetId(req.params.id);
+         if (!budgetConcepts) {
+            return handleResponse(res, 404, "Budget concepts not found");
+         }
+         return handleResponse(res, 200, "Budget concepts found", budgetConcepts);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
 };
-
-const addBudget = async (req: Request, res: Response): Promise<void> => {
-   const { title, client, project, items, amount, date } = req.body;
-
-   // Validar campos obligatorios
-   if (!title || !client || !project || !items || !amount) {
-      res.status(400).json({
-         error: "Faltan datos obligatorios. Por favor, verificá todos los campos.",
-      });
-   }
-
-   // Validar formato de `items` (debe ser un array no vacío)
-   if (!Array.isArray(items) || items.length === 0) {
-      res.status(400).json({
-         error: "El campo 'items' debe ser un array no vacío.",
-      });
-   }
-
-   const budgetBody: BudgetBody = {
-      title,
-      client,
-      project,
-      items,
-      amount,
-      date,
-   };
-
-   try {
-      const newBudget = await Budget.addBudget(budgetBody);
-      res.status(201).json(newBudget);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al agregar el presupuesto",
-         error: error.message,
-      });
-   }
-};
-
-const deleteBudget = async (req: Request, res: Response) => {
-   const { id } = req.params;
-
-   try {
-      const deletedBudget = await Budget.deleteBudget(id);
-
-      res.status(200).json({
-         message: "Presupuesto eliminado con éxito",
-         deletedBudget,
-      });
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al eliminar el presupuesto",
-         error: error.message,
-      });
-   }
-};
-
-const updateBudget = async (req: Request, res: Response) => {
-   const { id } = req.params;
-   const data = req.body;
-
-   try {
-      const updatedBudget = await Budget.updateBudget(id, data);
-      res.status(200).json({
-         message: "Presupuesto actualizado con éxito",
-         updatedBudget,
-      });
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al actualizar el presupuesto",
-         error: error.message,
-      });
-   }
-};
-
-const getBudgetById = async (req: Request, res: Response) => {
-   const { id } = req.params;
-
-   try {
-      const budget = await Budget.getBudgetById(id);
-      res.status(200).json(budget);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al obtener el presupuesto",
-         error: error.message,
-      });
-   }
-};
-
-export { getAllBudgets, addBudget, deleteBudget, updateBudget, getBudgetById };

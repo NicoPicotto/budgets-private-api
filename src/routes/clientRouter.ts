@@ -1,10 +1,6 @@
 import { Router } from "express";
 import {
-   getAllClients,
-   addClient,
-   deleteClient,
-   getClientById,
-   updateClient,
+   ClientController
 } from "../controllers/clientController";
 import { AuthMiddleware } from "../middleware/authMiddleware";
 
@@ -12,10 +8,10 @@ const clientRouter = Router();
 
 clientRouter.use(AuthMiddleware.authenticate);
 
-clientRouter.get("/", getAllClients);
-clientRouter.get("/:id", getClientById);
-clientRouter.post("/", addClient);
-clientRouter.delete("/:id", deleteClient);
-clientRouter.put("/:id", updateClient);
+clientRouter.get("/", ClientController.getClients);
+clientRouter.get("/:id", ClientController.getClientById);
+clientRouter.post("/", ClientController.createClient);
+clientRouter.delete("/:id", ClientController.deleteClient);
+clientRouter.put("/:id", ClientController.updateClient);
 
 export default clientRouter;

@@ -7,15 +7,3 @@ export interface IToken {
     accessToken: string;
     createdAt: string;
 }
-
-export interface ITokenRequest extends Request {
-    params: {
-        accessToken: string;
-    };
-}
-
-export interface ITokenResponse extends Response {
-    success: boolean;
-    message: string;
-    accessToken: string;
-}

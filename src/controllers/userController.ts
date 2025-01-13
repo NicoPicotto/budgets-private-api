@@ -1,26 +1,15 @@
 import { Response } from 'express';
 import { UserService } from '../services/userService';
 import { handleResponse } from '../utils/responseHandler';
-import {
-   ICreateUserRequest,
-   IGetUserRequest,
-   IGetUserByIdRequest,
-   IDeleteUserRequest,
-   IUpdateUserRequest,
-   ICreateUserResponse,
-   IGetUsersResponse,
-   IGetUserByIdResponse,
-   IDeleteUserResponse,
-   IUpdateUserResponse
-} from '../interfaces/userInterface';
 import { getErrorMessage } from '../utils/errorHandler';
+import { IRequest } from '../interfaces/requestInterface';
 
 export const UserController = {
 
    async createUser(
-      req: ICreateUserRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<ICreateUserResponse>> {
+   ): Promise<Response> {
       try {
          const newUser = await UserService.createUser(req.body);
          return handleResponse(res, 201, 'User created successfully', newUser.toObject());
@@ -29,9 +18,9 @@ export const UserController = {
       }
    },
    async updateUser(
-      req: IUpdateUserRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<IUpdateUserResponse>> {
+   ): Promise<Response> {
       try {
          const updatedUser = await UserService.updateUser(req.params.id, req.body);
          return handleResponse(res, 200, 'User updated successfully', updatedUser.toObject());
@@ -40,7 +29,7 @@ export const UserController = {
       }
    },
 
-   async getUsers(req: IGetUserRequest, res: Response): Promise<Response<IGetUsersResponse>> {
+   async getUsers(req: IRequest, res: Response): Promise<Response> {
 
       try {
          const users = await UserService.getUsers();
@@ -51,9 +40,9 @@ export const UserController = {
    },
 
    async getUserById(
-      req: IGetUserByIdRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<IGetUserByIdResponse>> {
+   ): Promise<Response> {
       try {
          const user = await UserService.getUserById(req.params.id);
          if (!user) {
@@ -66,10 +55,11 @@ export const UserController = {
    },
 
    async deleteUser(
-      req: IDeleteUserRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<IDeleteUserResponse>> {
+   ): Promise<Response> {
       try {
+
          const user = await UserService.deleteUser(req.params.id);
          if (!user) {
             return handleResponse(res, 404, 'User not found');

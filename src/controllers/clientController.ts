@@ -1,109 +1,60 @@
 import { Request, Response } from "express";
-import Client from "../models/clientModel";
-import ClientBody from "../interfaces/clientInterface";
+import { ClientService } from "../services/clientService";
+import { handleResponse } from "../utils/responseHandler";
+import { getErrorMessage } from "../utils/errorHandler";
 
-const getAllClients = async (req: Request, res: Response) => {
-   try {
-      const clients = await Client.getAllClients();
-      res.status(200).json(clients);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al obtener los clientes",
-         error: error.message,
-      });
-   }
-};
-
-const addClient = async (req: Request, res: Response): Promise<void> => {
-   const { name, email } = req.body;
-
-   // Validar campos obligatorios
-   if (!name || !email) {
-      res.status(400).json({
-         error: "Faltan datos obligatorios. Por favor, verificá todos los campos.",
-      });
-   }
-
-   const clientBody: ClientBody = {
-      name,
-      email,
-      active: true,
-   };
-
-   try {
-      const newClient = await Client.addClient(clientBody);
-      res.status(201).json(newClient);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al agregar el cliente",
-         error: error.message,
-      });
-   }
-};
-
-const deleteClient = async (req: Request, res: Response) => {
-   const { id } = req.params;
-
-   try {
-      const deletedClient = await Client.deleteClient(id);
-
-      res.status(200).json({
-         message: "Cliente eliminado con éxito",
-         deletedClient,
-      });
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al eliminar el cliente",
-         error: error.message,
-      });
-   }
-};
-
-const updateClient = async (req: Request, res: Response) => {
-   const { id } = req.params;
-   const data = req.body;
-
-   if (data.length === 0) {
-      return res.status(400).json({
-         error: "No se proporcionaron campos válidos para actualizar.",
-      });
-   }
-
-   try {
-      const updatedClient = await Client.updateClient(id, data);
-      if (!updatedClient) {
-         return res.status(404).json({
-            error: "Cliente no encontrado.",
-         });
+export const ClientController = {
+   async createClient(req: Request, res: Response) {
+      try {
+         const client = await ClientService.createClient(req.body);
+         return handleResponse(res, 201, "Client created", client);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
       }
-      res.status(200).json({
-         message: "Presupuesto actualizado con éxito",
-         updatedClient,
-      });
-   } catch (error: any) {
-      res.status(500).json({
-         message: "Error al actualizar el cliente",
-         error: error.message,
-      });
-   }
+   },
+
+   async getClients(req: Request, res: Response) {
+      try {
+         const clients = await ClientService.getClients();
+         return handleResponse(res, 200, "Clients found", clients);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async getClientById(req: Request, res: Response) {
+      try {
+         const client = await ClientService.getClientById(req.params.id);
+         if (!client) {
+            return handleResponse(res, 404, "Client not found");
+         }
+         return handleResponse(res, 200, "Client found", client);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async updateClient(req: Request, res: Response) {
+      try {
+         const client = await ClientService.updateClient(req.params.id, req.body);
+         if (!client) {
+            return handleResponse(res, 404, "Client not found");
+         }
+         return handleResponse(res, 200, "Client updated", client);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
+
+   async deleteClient(req: Request, res: Response) {
+      try {
+         const client = await ClientService.deleteClient(req.params.id);
+         if (!client) {
+            return handleResponse(res, 404, "Client not found");
+         }
+         return handleResponse(res, 200, "Client deleted", client);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
 };
-
-const getClientById = async (req: Request, res: Response) => {
-   const { id } = req.params;
-
-   try {
-      const client = await Client.getClientById(id);
-      res.status(200).json(client);
-   } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-         message: "Error al obtener el cliente",
-         error: error.message,
-      });
-   }
-};
-
-export { getAllClients, addClient, deleteClient, updateClient, getClientById };

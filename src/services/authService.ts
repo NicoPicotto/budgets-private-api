@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { UserModel } from '../models/userModel';
-import { IUser, IResetPassword } from '../interfaces/userInterface';
+import { IUser } from '../interfaces/userInterface';
 import { IToken } from '../interfaces/tokenInterface';
 import { getErrorMessage } from '../utils/errorHandler';
 import { MailerService } from './mailerService';
@@ -10,11 +10,47 @@ import jwt from "jsonwebtoken";
 
 export class AuthService {
 
-    static async login(data: Partial<IUser>): Promise<any> { //TODO cambiar tipo reponse
+    static validateLoginData(data: Partial<IUser>): void {
+        const errors = [];
 
-        if (!data.email || !data.password) {
-            throw new Error('Email and password are required');
+        if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            errors.push({ field: "email", message: "A valid email is required." });
         }
+
+        if (!data.password || data.password.trim().length < 6) {
+            errors.push({ field: "password", message: "Password must be at least 6 characters long." });
+        }
+
+        if (errors.length > 0) {
+            throw new Error(JSON.stringify(errors));
+        }
+    }
+
+    static validateResetPasswordData(data: Partial<IUser>): void {
+        const errors = [];
+
+        if (!data.password || data.password.trim().length < 6) {
+            errors.push({ field: "password", message: "Password must be at least 6 characters long." });
+        }
+
+        if (!data.confirmPassword || data.password !== data.confirmPassword) {
+            errors.push({ field: "confirmPassword", message: "Passwords do not match." });
+        }
+
+        if (errors.length > 0) {
+            throw new Error(JSON.stringify(errors));
+        }
+    }
+
+    static validateTokenData(data: Partial<IToken>): void {
+        if (!data.accessToken) {
+            throw new Error(JSON.stringify([{ field: "accessToken", message: "Token is required." }]));
+        }
+    }
+
+    static async login(data: Partial<IUser>): Promise<any> {
+
+        this.validateLoginData(data);
 
         try {
             // Buscar el usuario por email
@@ -22,6 +58,12 @@ export class AuthService {
             if (!user) {
                 throw new Error("Invalid credentials");
             }
+
+            // Asegurarse de que data.password es una cadena
+            if (!data.password) {
+                throw new Error("Password is required");
+            }
+
 
             const isMatch = await user.comparePassword(data.password);
             if (!isMatch) {
@@ -39,69 +81,6 @@ export class AuthService {
             throw new Error(getErrorMessage(error));
         }
     }
-
-    /*
-    static async resetPassword(data: IResetPassword): Promise<IUser> {
-        const { email, password, confirmPassword } = data;
-
-        if (!password || password.trim() === '') {
-            throw new Error("Password can't be blank");
-        }
-
-        if (!confirmPassword || confirmPassword.trim() === '') {
-            throw new Error("Confirm password can't be blank");
-        }
-
-        if (password !== confirmPassword) {
-            throw new Error("Passwords do not match");
-        }
-
-        try {
-            // Buscar al usuario por email
-            const user = await UserModel.findOne({ email });
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            // Actualizar la contraseña del usuario
-            user.password = password;
-
-            await user.save();
-
-            return user.toObject();
-        } catch (error) {
-            throw new Error(getErrorMessage(error));
-        }
-    }
-
-
-    static async getResetPassword(data: Partial<IToken>): Promise<IUser> {
-
-        if (!data.accessToken) {
-            throw new Error('Token is required');
-        }
-
-        try {
-
-            // Crear el hash del token proporcionado
-            const hashedToken = crypto.createHash('sha256').update(data.accessToken).digest('hex');
-
-            const user = await UserModel.findOne({
-                passwordResetToken: hashedToken,
-                passwordResetTokenExpires: { $gt: Date.now() }, // Verificar que el token no haya expirado
-            });
-
-            if (!user) {
-                throw new Error('Invalid or expired token');
-            }
-
-            return user.toObject(); // Convertir el documento a un objeto limpio
-
-        } catch (error) {
-            throw new Error(getErrorMessage(error));
-        }
-    }
-    */
 
     static generateAccessToken(userId: string, tokenVersion: number): string {
 

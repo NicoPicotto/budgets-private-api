@@ -1,5 +1,11 @@
-export default interface ClientBody {
-   email: string;
+
+import { Document } from 'mongoose';
+
+export interface IClient extends Document {
+
+   _id: string;
    name: string;
-   active: Boolean;
+   email: string;
+   state: string;
+
 }

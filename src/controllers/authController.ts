@@ -3,8 +3,7 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/userService';
 import { AuthService } from '../services/authService';
 import { handleResponse } from '../utils/responseHandler';
-import { ICreateUserRequest, ICreateUserResponse, IUserLoginRequest, IUserLoginResponse, IForgotPasswordRequest, ILogoutUserRequest, IRefreshTokenRequest, IChangePasswordRequest, ISendInvitationRequest, IAcceptInvitationRequest } from '../interfaces/userInterface';
-import { ITokenRequest } from '../interfaces/tokenInterface';
+import { IRequest } from '../interfaces/requestInterface';
 import { MailerService } from '../services/mailerService';
 
 
@@ -12,23 +11,23 @@ export const AuthController = {
 
    // Registro
    async register(
-      req: ICreateUserRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<ICreateUserResponse>> {
+   ): Promise<Response<IRequest>> {
       try {
          const user = await UserService.createUser(req.body);
-         return handleResponse(res, 201, 'Usuario registrado', { id: user._id });
+         return handleResponse(res, 201, 'User registered', { id: user._id });
       } catch (error) {
-         const message = error instanceof Error ? error.message : 'Error desconocido';
+         const message = error instanceof Error ? error.message : 'Unknown error';
          return handleResponse(res, 400, message, null, error);
       }
    },
 
    // Login
    async login(
-      req: IUserLoginRequest,
+      req: IRequest,
       res: Response
-   ): Promise<Response<IUserLoginResponse>> {
+   ): Promise<Response<IRequest>> {
       try {
 
          const { accessToken, refreshToken } = await AuthService.login(req.body);
@@ -42,7 +41,7 @@ export const AuthController = {
       }
    },
 
-   async logout(req: ILogoutUserRequest, res: Response): Promise<Response> {
+   async logout(req: IRequest, res: Response): Promise<Response> {
       try {
          const { refreshToken } = req.body;
          if (!refreshToken) throw new Error("Refresh token is required");
@@ -57,7 +56,7 @@ export const AuthController = {
       }
    },
 
-   async forgotPassword(req: IForgotPasswordRequest, res: Response): Promise<Response> {
+   async forgotPassword(req: IRequest, res: Response): Promise<Response> {
       try {
          const { email } = req.body;
          if (!email) throw new Error("Email is required");
@@ -74,7 +73,7 @@ export const AuthController = {
       }
    },
 
-   async changePassword(req: IChangePasswordRequest, res: Response): Promise<Response> {
+   async changePassword(req: IRequest, res: Response): Promise<Response> {
       try {
          const { newPassword } = req.body;
          if (!newPassword) throw new Error("Token and new password are required");
@@ -93,7 +92,7 @@ export const AuthController = {
       }
    },
 
-   async resetPassword(req: Request, res: Response): Promise<Response> {
+   async resetPassword(req: IRequest, res: Response): Promise<Response> {
       try {
          const { token, newPassword } = req.body;
          if (!token || !newPassword) {
@@ -119,7 +118,7 @@ export const AuthController = {
       }
    },
 
-   async validateResetToken(req: ITokenRequest, res: Response): Promise<Response> {
+   async validateResetToken(req: IRequest, res: Response): Promise<Response> {
       try {
          const { accessToken } = req.params;
          if (!accessToken) throw new Error("Token is required");
@@ -134,7 +133,7 @@ export const AuthController = {
       }
    },
 
-   async refreshToken(req: IRefreshTokenRequest, res: Response): Promise<Response> {
+   async refreshToken(req: IRequest, res: Response): Promise<Response> {
       try {
          const { refreshToken } = req.body;
          if (!refreshToken) throw new Error("Refresh token is required");
@@ -146,7 +145,7 @@ export const AuthController = {
          return handleResponse(res, 400, message, null, error);
       }
    },
-   async sendInvitation(req: ISendInvitationRequest, res: Response): Promise<Response> {
+   async sendInvitation(req: IRequest, res: Response): Promise<Response> {
 
       try {
          const { email } = req.body;
@@ -162,7 +161,7 @@ export const AuthController = {
          return handleResponse(res, 400, message, null, error);
       }
    },
-   async validateInvitation(req: ITokenRequest, res: Response): Promise<Response> {
+   async validateInvitation(req: IRequest, res: Response): Promise<Response> {
       try {
          const { accessToken } = req.params;
          if (!accessToken) throw new Error("Token is required");
@@ -174,7 +173,7 @@ export const AuthController = {
          return res.status(400).json({ message });
       }
    },
-   async acceptInvitation(req: IAcceptInvitationRequest, res: Response): Promise<Response> {
+   async acceptInvitation(req: IRequest, res: Response): Promise<Response> {
       try {
 
          const { token, newPassword } = req.body;
@@ -198,7 +197,7 @@ export const AuthController = {
          return res.status(400).json({ message });
       }
    },
-   async revokeToken(req: IRefreshTokenRequest, res: Response): Promise<Response> {
+   async revokeToken(req: IRequest, res: Response): Promise<Response> {
       try {
          const { refreshToken } = req.body;
          if (!refreshToken) throw new Error("Refresh token is required");
