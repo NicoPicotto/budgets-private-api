@@ -10,6 +10,7 @@ import conceptRouter from "./routes/conceptRouter";
 import resourceTypeRouter from "./routes/resourceTypeRouter";
 import conceptTypeRouter from "./routes/conceptTypeRouter";
 import projectRouter from "./routes/projectRouter";
+import sellerRouter from "./routes/sellerRouter";
 
 const PORT = process.env.PORT || 3000;
 
@@ -27,6 +28,7 @@ app.use("/api/concepts", conceptRouter);
 app.use("/api/concepttypes", conceptTypeRouter);
 app.use("/api/resourcetypes", resourceTypeRouter);
 app.use("/api/projects", projectRouter);
+app.use("/api/sellers", sellerRouter);
 
 app.listen(PORT, () => {
    console.log("Server is running on port", PORT);
