@@ -9,6 +9,7 @@ export interface IUser extends Document {
    email: string;
    password: string;
    role: string;
+   state: string;
    resetPasswordToken?: string;
    resetPasswordExpires?: Date;
    createdAt?: Date;

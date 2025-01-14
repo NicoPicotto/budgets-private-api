@@ -1,7 +1,7 @@
 
 import { Schema, model, } from 'mongoose';
 import { IClient } from "../interfaces/clientInterface";
-const { CLIENT_STATES } = require('../config/constants');
+import { CLIENT_STATES } from '../config/constants';
 
 
 const ClientSchema = new Schema(

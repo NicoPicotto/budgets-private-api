@@ -1,10 +1,8 @@
 import { IBudget } from "../interfaces/budgetInterface";
 import { BudgetModel } from "../models/budgetModel";
-const { BUDGET_STATES } = require('../config/constants');
 import { BudgetConceptModel } from "../models/budgetConceptModel";
 import { IBudgetConcept } from "../interfaces/budgetConceptInterface";
-import { Types, } from 'mongoose';
-
+import { BUDGET_STATES } from '../config/constants';
 
 
 export class BudgetService {
@@ -27,7 +25,7 @@ export class BudgetService {
             errors.push({ field: "commissionPercentage", message: "Commission percentage must be between 0 and 100." });
         }
 
-        if (budgetData.state && !BUDGET_STATES.includes(budgetData.state)) {
+        if (budgetData.state && !Object.values(BUDGET_STATES).includes(budgetData.state as any)) {
             errors.push({ field: "state", message: "State must be a valid budget state." });
         }
 

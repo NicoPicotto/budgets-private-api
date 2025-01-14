@@ -1,8 +1,7 @@
 import { Schema, model, } from 'mongoose';
 import bcrypt from "bcrypt";
 import { IUser } from "../interfaces/userInterface";
-const { USER_STATES, ROLES } = require('../config/constants');
-
+import { USER_STATES, ROLES } from '../config/constants';
 
 const UserSchema = new Schema(
    {

@@ -1,6 +1,6 @@
 import { UserModel } from '../models/userModel';
 import { IUser } from '../interfaces/userInterface';
-const { USER_STATES } = require('../config/constants');
+import { USER_STATES, ROLES } from '../config/constants';
 
 export class UserService {
 
@@ -8,11 +8,11 @@ export class UserService {
         const errors = [];
 
         if (!userData.firstName || userData.firstName.trim().length < 3) {
-            errors.push({ field: "name", message: "First Name must be at least 3 characters long." });
+            errors.push({ field: "firstNAme", message: "First Name must be at least 3 characters long." });
         }
 
         if (!userData.lastName || userData.lastName.trim().length < 3) {
-            errors.push({ field: "name", message: "Last Name must be at least 3 characters long." });
+            errors.push({ field: "lastName", message: "Last Name must be at least 3 characters long." });
         }
 
         if (!userData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
@@ -23,8 +23,12 @@ export class UserService {
             errors.push({ field: "password", message: "Password must be at least 6 characters long." });
         }
 
-        if (userData.role && !USER_STATES.includes(userData.role)) {
-            errors.push({ field: "role", message: "Role must be one of Admin, User, or Moderator." });
+        if (userData.role && !Object.values(ROLES).includes(userData.role as any)) {
+            errors.push({ field: "state", message: "Role must be one of Admin, User, or Moderator." });
+        }
+
+        if (userData.state && !Object.values(USER_STATES).includes(userData.state as any)) {
+            errors.push({ field: "state", message: "State must be a valid budget state." });
         }
 
         if (errors.length > 0) {

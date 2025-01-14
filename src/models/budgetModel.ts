@@ -1,6 +1,6 @@
 import { Schema, model, } from 'mongoose';
 import { IBudget } from "../interfaces/budgetInterface";
-const { BUDGET_STATES } = require('../config/constants');
+import { BUDGET_STATES } from '../config/constants';
 import { BudgetConceptModel } from "./budgetConceptModel";
 
 const budgetSchema = new Schema(
