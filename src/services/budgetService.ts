@@ -199,16 +199,26 @@ export class BudgetService {
         return budgetConcept;
     }
 
-    public static async updateBudgetConcept(id: string, budgetConceptData: Partial<IBudgetConcept>): Promise<IBudgetConcept | null> {
-        const updatedBudgetConcept = await BudgetConceptModel.findByIdAndUpdate(id, budgetConceptData, {
+    public static async updateBudgetConcept(budgetId: string, conceptId: string, budgetConceptData: Partial<IBudgetConcept>): Promise<IBudget | null> {
+        const updatedBudgetConcept = await BudgetConceptModel.findByIdAndUpdate(conceptId, budgetConceptData, {
             new: true,
             runValidators: true,
-        }).populate("budget");
+        });
 
         if (!updatedBudgetConcept) {
             throw new Error("Budget concept not found");
         }
-        return updatedBudgetConcept;
+
+        const populatedBudget = await BudgetModel.findById(budgetId)
+            .populate({
+                path: "project",
+                populate: { path: "client" },
+            })
+            .populate("budgetConcepts")
+            .exec();
+
+        return populatedBudget;
+
     }
 
     public static async getBudgetConcepts(budgetId: string): Promise<IBudgetConcept[]> {

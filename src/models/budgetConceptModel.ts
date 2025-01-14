@@ -5,12 +5,12 @@ import { IBudgetConcept } from "../interfaces/budgetConceptInterface";
 const ClientSchema = new Schema(
     {
         concept: { type: Schema.Types.ObjectId, ref: "Concept" },
-        quantity: { type: Number, required: false },
-        costPrice: { type: Number, required: false },
-        percentageRisk: { type: Number, required: false },
-        effortHours: { type: Number, required: false },
-        effortRisk: { type: Number, required: false },
-        totalCost: { type: Number, required: false }
+        quantity: { type: Number, required: false, default: 0 },
+        costPrice: { type: Number, required: false, default: 0 },
+        percentageRisk: { type: Number, required: false, default: 0 },
+        effortHours: { type: Number, required: false, default: 0 },
+        effortRisk: { type: Number, required: false, default: 0 },
+        totalCost: { type: Number, required: false, default: 0 },
     },
     {
         timestamps: true,

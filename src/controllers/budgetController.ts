@@ -98,7 +98,7 @@ export const BudgetController = {
 
    async updateBudgetConcept(req: Request, res: Response) {
       try {
-         const budgetConcept = await BudgetService.updateBudgetConcept(req.params.conceptId, req.body);
+         const budgetConcept = await BudgetService.updateBudgetConcept(req.params.id, req.params.conceptId, req.body);
          if (!budgetConcept) {
             return handleResponse(res, 404, "Budget concept not found");
          }
