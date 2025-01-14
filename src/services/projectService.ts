@@ -1,5 +1,6 @@
 import { IProject } from "../interfaces/projectInterface";
 import { ProjectModel } from "../models/projectModel";
+import { PROJECT_STATES } from '../config/constants';
 
 export class ProjectService {
 
@@ -10,8 +11,8 @@ export class ProjectService {
             errors.push({ field: "name", message: "Name must be at least 3 characters long." });
         }
 
-        if (projectData.state && !["Active", "Inactive", "Suspended", "Removed"].includes(projectData.state)) {
-            errors.push({ field: "state", message: "State must be one of Active, Inactive, Suspended, or Removed." });
+        if (projectData.state && !Object.values(PROJECT_STATES).includes(projectData.state as any)) {
+            errors.push({ field: "state", message: "State must be a valid project state." });
         }
 
         if (errors.length > 0) {

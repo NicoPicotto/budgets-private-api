@@ -57,4 +57,16 @@ export const ClientController = {
          return handleResponse(res, 400, getErrorMessage(error));
       }
    },
+
+   async getProjects(req: Request, res: Response) {
+      try {
+         const projects = await ClientService.getProjects(req.params.id);
+         if (!projects || projects.length === 0) {
+            return handleResponse(res, 404, "Projects not found for this client");
+         }
+         return handleResponse(res, 200, "Projects found", projects);
+      } catch (error) {
+         return handleResponse(res, 400, getErrorMessage(error));
+      }
+   },
 };

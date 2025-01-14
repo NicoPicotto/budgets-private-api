@@ -1,6 +1,7 @@
 import { IClient } from "../interfaces/clientInterface";
 import { ClientModel } from "../models/clientModel";
-
+import { ProjectModel } from "../models/projectModel";
+import { IProject } from "../interfaces/projectInterface";
 
 export class ClientService {
 
@@ -58,5 +59,13 @@ export class ClientService {
 
     static async deleteClient(id: string): Promise<IClient | null> {
         return await ClientModel.findByIdAndDelete(id);
+    }
+
+    static async getProjects(clientId: string): Promise<IProject[]> {
+        const projects = await ProjectModel.find({ client: clientId });
+        if (!projects || projects.length === 0) {
+            throw new Error("No projects found for this client");
+        }
+        return projects;
     }
 }

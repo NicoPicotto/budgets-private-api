@@ -168,7 +168,7 @@ export class BudgetService {
         }
 
         budget.budgetConcepts = budget.budgetConcepts.filter(
-            (concept) => concept._id !== budgetConceptId
+            (concept) => concept.toString() !== budgetConceptId
         );
         await budget.save();
 
@@ -184,14 +184,18 @@ export class BudgetService {
     }
 
     public static async getBudgetConceptsByBudgetId(budgetId: string): Promise<IBudgetConcept[]> {
-        const budgetConcepts = await BudgetConceptModel.find({ budget: budgetId })
-            .populate("budget");
-        return budgetConcepts;
+        const budget = await BudgetModel.findById(budgetId).populate("budgetConcepts");
+        if (!budget) {
+            throw new Error("Budget not found");
+        }
+        return budget.budgetConcepts as IBudgetConcept[];
     }
 
     public static async getBudgetConceptById(id: string): Promise<IBudgetConcept | null> {
-        const budgetConcept = await BudgetConceptModel.findById(id)
-            .populate("budget");
+        const budgetConcept = await BudgetConceptModel.findById(id).populate("budget");
+        if (!budgetConcept) {
+            throw new Error("Budget concept not found");
+        }
         return budgetConcept;
     }
 
@@ -199,20 +203,21 @@ export class BudgetService {
         const updatedBudgetConcept = await BudgetConceptModel.findByIdAndUpdate(id, budgetConceptData, {
             new: true,
             runValidators: true,
-        })
-            .populate("budget");
+        }).populate("budget");
+
+        if (!updatedBudgetConcept) {
+            throw new Error("Budget concept not found");
+        }
         return updatedBudgetConcept;
     }
 
     public static async getBudgetConcepts(budgetId: string): Promise<IBudgetConcept[]> {
-        const budgetConcepts = await BudgetConceptModel.find({ budget: budgetId })
-            .populate("budget");
-        return budgetConcepts;
+        const budget = await BudgetModel.findById(budgetId).populate("budgetConcepts");
+        if (!budget) {
+            throw new Error("Budget not found");
+        }
+        return budget.budgetConcepts as IBudgetConcept[];
     }
-
-
-
-
 
 
 }

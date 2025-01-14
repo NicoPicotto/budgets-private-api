@@ -13,5 +13,7 @@ clientRouter.get("/:id", ClientController.getClientById);
 clientRouter.post("/", ClientController.createClient);
 clientRouter.delete("/:id", ClientController.deleteClient);
 clientRouter.put("/:id", ClientController.updateClient);
+clientRouter.get("/:id/projects", ClientController.getProjects);
+
 
 export default clientRouter;
