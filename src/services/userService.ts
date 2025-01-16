@@ -76,4 +76,34 @@ export class UserService {
 
         return await UserModel.findByIdAndDelete(id);
     }
+
+    static async updateProfile(id: string, profileData: Partial<IUser>): Promise<IUser> {
+        const allowedFields = ["firstName", "lastName", "email"]; // Campos que el usuario puede modificar
+        const updateData: Partial<IUser> = {};
+
+        for (const key of allowedFields) {
+            if (profileData[key as keyof IUser] !== undefined) {
+                updateData[key as keyof IUser] = profileData[key as keyof IUser];
+            }
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            throw new Error("No valid fields provided for update.");
+        }
+
+        // Validar los datos del perfil antes de guardar
+        this.validateUserData(updateData);
+
+        const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true,
+        });
+
+        if (!updatedUser) {
+            throw new Error("User not found or error updating profile.");
+        }
+
+        return updatedUser;
+    }
+
 }

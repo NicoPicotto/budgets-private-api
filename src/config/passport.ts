@@ -36,7 +36,7 @@ passport.use(
                     errors: { username: { message: "The email is invalid" } },
                 });
             }
-            console.log("user", user)
+
             return done(null, { user });
         } catch (err) {
             return done(err);

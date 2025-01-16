@@ -9,6 +9,11 @@ export class ResourceTypeService {
         if (!resourceTypeData.name || resourceTypeData.name.trim().length < 3) {
             errors.push({ field: "name", message: "Name must be at least 3 characters long." });
         }
+
+        if (resourceTypeData.costPrice === undefined || resourceTypeData.costPrice < 0) {
+            errors.push({ field: "costPrice", message: "Cost price must be a non-negative number." });
+        }
+
         if (errors.length > 0) {
             throw new Error(JSON.stringify(errors));
         }

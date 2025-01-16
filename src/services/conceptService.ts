@@ -10,9 +10,6 @@ export class ConceptService {
             errors.push({ field: "name", message: "Name must be at least 3 characters long." });
         }
 
-        if (conceptData.costPrice === undefined || conceptData.costPrice < 0) {
-            errors.push({ field: "costPrice", message: "Cost price must be a non-negative number." });
-        }
 
         if (conceptData.amountHours !== undefined && conceptData.amountHours < 0) {
             errors.push({ field: "amountHours", message: "amountHours must be a non-negative number." });

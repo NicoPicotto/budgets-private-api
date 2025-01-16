@@ -6,6 +6,7 @@ import { IResourceType } from "../interfaces/resourceTypeInterface";
 const ResourceTypeSchema = new Schema(
     {
         name: { type: String, required: true },
+        costPrice: { type: Number, required: true },
     },
     {
         versionKey: false,

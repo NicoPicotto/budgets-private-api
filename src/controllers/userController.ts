@@ -69,4 +69,17 @@ export const UserController = {
          return handleResponse(res, 500, 'Server Error', undefined, error);
       }
    },
+
+   async updateProfile(
+      req: IRequest,
+      res: Response
+   ): Promise<Response> {
+      try {
+         const updatedUser = await UserService.updateProfile(req.currentUser._id, req.body);
+         return handleResponse(res, 200, 'Profile updated successfully', updatedUser);
+      } catch (error) {
+
+         return handleResponse(res, 400, getErrorMessage(error), undefined, error);
+      }
+   },
 };

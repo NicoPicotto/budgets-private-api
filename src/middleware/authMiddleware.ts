@@ -11,7 +11,6 @@ export const AuthMiddleware = {
             return next(err);
          }
 
-         console.log("currentUser", req.currentUser);
 
          if (!currentUser) {
             return res.status(401).json({ message: "Unauthorized Access - No Token Provided!" });
