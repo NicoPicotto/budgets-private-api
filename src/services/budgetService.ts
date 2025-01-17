@@ -77,7 +77,6 @@ export class BudgetService {
 
     public static async updateBudget(id: string, budgetData: Partial<IBudget>): Promise<IBudget | null> {
         this.validateBudgetData(budgetData);
-
         const updatedBudget = await BudgetModel.findByIdAndUpdate(id, budgetData, {
             new: true,
             runValidators: true,

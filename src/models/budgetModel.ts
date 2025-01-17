@@ -21,8 +21,23 @@ const budgetSchema = new Schema(
       totalPrice: { type: Number, default: 0 },
       totalPriceRecurring: { type: Number, default: 0 },
       state: { type: String, enum: [BUDGET_STATES.DRAFT, BUDGET_STATES.PENDING_APPROVAL, BUDGET_STATES.APPROVED, BUDGET_STATES.ACTIVE, BUDGET_STATES.SUSPENDED, BUDGET_STATES.CANCELLED, BUDGET_STATES.COMPLETED], default: BUDGET_STATES.DRAFT },
+      seller: { type: Schema.Types.ObjectId, ref: "Seller", required: false, default: null },
    },
    { versionKey: false, timestamps: true }
 );
+
+
+budgetSchema.pre("findOneAndUpdate", function (next) {
+   const update = this.getUpdate();
+
+   if (update && typeof update === "object" && "seller" in update && update.seller === "") {
+      update.seller = null;
+   }
+
+   next();
+});
+
+
+
 
 export const BudgetModel = model<IBudget>("Budget", budgetSchema);

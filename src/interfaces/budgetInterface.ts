@@ -18,6 +18,7 @@ export interface IBudget extends Document {
    totalPrice: number;
    totalPriceRecurring: number;
    state: string;
+   seller: string
    createdAt: Date;
    updatedAt: Date;
    deletedAt: Date;
