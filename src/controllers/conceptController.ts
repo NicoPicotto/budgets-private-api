@@ -58,4 +58,12 @@ export const ConceptController = {
             return handleResponse(res, 400, getErrorMessage(error));
         }
     },
+    async getConceptsByResourceType(req: Request, res: Response) {
+        try {
+            const concepts = await ConceptService.getConceptsByResourceType(req.params.resourceType);
+            return handleResponse(res, 200, "Concepts retrieved", concepts);
+        } catch (error) {
+            return handleResponse(res, 400, getErrorMessage(error));
+        }
+    },
 };

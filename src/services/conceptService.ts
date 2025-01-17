@@ -77,4 +77,9 @@ export class ConceptService {
         const deletedConcept = await ConceptModel.findByIdAndDelete(id);
         return deletedConcept;
     }
+
+    public static async getConceptsByResourceType(resourceType: string): Promise<IConcept[]> {
+        return await ConceptModel.find({ resourceType: resourceType })
+            .populate("resourceType");
+    }
 }

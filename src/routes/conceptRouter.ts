@@ -13,5 +13,6 @@ conceptRouter.get("/:id", ConceptController.getConceptById);
 conceptRouter.post("/", ConceptController.createConcept);
 conceptRouter.delete("/:id", ConceptController.deleteConcept);
 conceptRouter.put("/:id", ConceptController.updateConcept);
+conceptRouter.get("/resourceType/:resourceType", ConceptController.getConceptsByResourceType);
 
 export default conceptRouter;
