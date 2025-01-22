@@ -61,7 +61,8 @@ export class BudgetService {
             path: "project",
             populate: { path: "client" },
          })
-         .populate("budgetConcepts");
+         .populate("budgetConcepts")
+         .populate("seller");
       return budgets;
    }
 
@@ -71,7 +72,8 @@ export class BudgetService {
             path: "project",
             populate: { path: "client" },
          })
-         .populate("budgetConcepts");
+         .populate("budgetConcepts")
+         .populate("seller");
       return budget;
    }
 
